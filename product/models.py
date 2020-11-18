@@ -10,8 +10,8 @@ class Product(models.Model):
     detail_image       = models.URLField(max_length=500)
     essencial          = models.BooleanField()
     optional           = models.BooleanField()
-    productgroup_id    = models.ForeignKey('Productgroup', on_delete=models.CASCADE)
-    subsubcategy_id    = models.ForeignKey('SubSubCategory', on_delete=models.CASCADE)
+    productgroup       = models.ForeignKey('Productgroup', on_delete=models.CASCADE)
+    subsubcategy       = models.ForeignKey('SubSubCategory', on_delete=models.CASCADE)
     buy_count          = models.IntegerField()
     watch_count        = models.IntegerField()
 
@@ -35,28 +35,28 @@ class MainCategory(models.Model):
 
 class SubCategory(models.Model):
     name            = models.CharField(max_length=80)
-    maincategory_id = models.ForeignKey('MainCategory', on_delete=models.CASCADE)
+    maincategory    = models.ForeignKey('MainCategory', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'subcategories'
 
 class SubSubCategory(models.Model):
     name           = models.CharField(max_length=80)
-    subcategory_id = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
+    subcategory    = models.ForeignKey('SubCategory', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'subsubcategories'
 
 class WatchList(models.Model):
-    user_id     = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    product_id  = models.ForeignKey('Product', on_delete=models.CASCADE)
+    user    = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'watchlists'
 
 class PhotoReview(models.Model):
-    user_id     = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    product_id  = models.ForeignKey('Product', on_delete=models.CASCADE)
+    user        = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    product     = models.ForeignKey('Product', on_delete=models.CASCADE)
     image_url   = models.URLField(max_length=500)
     title       = models.CharField(max_length=200)
     content     = models.CharField(max_length=200)
@@ -67,8 +67,8 @@ class PhotoReview(models.Model):
         db_table = 'photoreviews'
 
 class Review(models.Model):
-    user_id      = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    product_id   = models.ForeignKey('Product', on_delete=models.CASCADE)
+    user         = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    product      = models.ForeignKey('Product', on_delete=models.CASCADE)
     satisfaction = models.CharField(max_length=2000)
     content      = models.CharField(max_length=50)
     create_at    = models.DateTimeField(auto_now_add=True)
@@ -77,8 +77,8 @@ class Review(models.Model):
         db_table = 'reviews'
 
 class Question(models.Model):
-    user_id       = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    product_id    = models.ForeignKey('Product', on_delete=models.CASCADE)
+    user          = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    product       = models.ForeignKey('Product', on_delete=models.CASCADE)
     title         = models.CharField(max_length=100)
     content       = models.CharField(max_length=100)
     question_type = models.CharField(max_length=2000)
