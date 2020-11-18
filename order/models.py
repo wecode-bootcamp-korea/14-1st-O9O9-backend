@@ -4,15 +4,14 @@ class OrderItem(models.Model):
     product  = models.ForeignKey('product.Product', on_delete=models.CASCADE)
     order    = models.ForeignKey('Order', on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    price    = models.CharField(max_length=80)
-    shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE)
+    shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'orderitems'
 
 class Order(models.Model):
     user         = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    order_number = models.IntegerField()
+    order_number = models.IntegerField(null=True)
     order_date   = models.DateTimeField(auto_now_add=True)
     name         = models.CharField(max_length=100)
     address      = models.CharField(max_length=100)
