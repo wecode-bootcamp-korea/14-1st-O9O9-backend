@@ -53,15 +53,3 @@ class WatchList(models.Model):
 
     class Meta:
         db_table = 'watchlists'
-
-class Question(models.Model):
-    user           = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    product        = models.ForeignKey('Product', on_delete=models.CASCADE)
-    title          = models.CharField(max_length=100)
-    content        = models.CharField(max_length=100)
-    question_type  = models.CharField(max_length=2000)
-    answer_status  = models.CharField(max_length=2000)
-    created_at     = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        db_table = 'questions'
