@@ -3,6 +3,7 @@ from django.db import models
 class Product(models.Model):
     name               = models.CharField(max_length=100)
     brand              = models.ForeignKey('Brand', on_delete=models.CASCADE, null=True)
+    price              = models.CharField(max_length=80, null=True)
     more_information   = models.TextField()
     seller_information = models.TextField()
     exchange           = models.TextField()
