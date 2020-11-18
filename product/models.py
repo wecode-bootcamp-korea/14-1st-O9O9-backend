@@ -60,7 +60,7 @@ class PhotoReview(models.Model):
     image_url   = models.URLField(max_length=500)
     title       = models.CharField(max_length=200)
     content     = models.CharField(max_length=200)
-    create_at   = models.DateTimeField(auto_now_add=True)
+    created_at   = models.DateTimeField(auto_now_add=True)
     view_count  = models.IntegerField()
 
     class Meta:
@@ -71,7 +71,7 @@ class Review(models.Model):
     product      = models.ForeignKey('Product', on_delete=models.CASCADE)
     satisfaction = models.CharField(max_length=2000)
     content      = models.CharField(max_length=50)
-    create_at    = models.DateTimeField(auto_now_add=True)
+    created_at    = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'reviews'
@@ -83,7 +83,7 @@ class Question(models.Model):
     content       = models.CharField(max_length=100)
     question_type = models.CharField(max_length=2000)
     answer_status = models.CharField(max_length=2000)
-    create_at     = models.DateTimeField(auto_now_add=True)
+    created_at     = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'questions'
