@@ -37,3 +37,26 @@ class CartView(View):
         )
 
         return JsonResponse({'message': 'ITEM ADD SUCCESS'}, status = 200)
+
+    @check_user
+    def get(self, request):
+        user_id = request.user.id
+
+        cart_items = CartItem.objects.filter(user_id=user_id).order_by('-id').values()
+        
+        try:
+            return JsonResponse({
+                'cart_item' : [
+                {
+                    'cart_id'          : cart_item['id'],
+                    'product_name'     : Product.objects.get(id=cart_item['product_id']).name,
+                    'quantity'         : cart_item['quantity'],
+                    'price'            : Product.objects.get(id=cart_item['product_id']).price,
+                    'thumbnail_image'  : Product.objects.get(id=cart_item['product_id']).thumbnail_image
+                } 
+                for cart_item in cart_items
+            ]
+            }, status = 200)
+
+        except Exception as error_message:
+            return JsonResponse({'message': error_message}, status = 400)
