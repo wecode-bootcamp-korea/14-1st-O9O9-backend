@@ -11,7 +11,7 @@ class OrderItem(models.Model):
 
 class Order(models.Model):
     user         = models.ForeignKey('user.User', on_delete=models.CASCADE)
-    order_number = models.IntegerField(null=True)
+    order_number = models.CharField(max_length=100, null=True)
     order_date   = models.DateTimeField(auto_now_add=True)
     name         = models.CharField(max_length=100)
     address      = models.CharField(max_length=100)
@@ -34,3 +34,11 @@ class Shipment(models.Model):
 
     class Meta:
         db_table = 'shipments'
+
+class CartItem(models.Model):
+    user       = models.ForeignKey('user.User', on_delete=models.CASCADE, null = True)
+    product    = models.ForeignKey('product.Product', on_delete=models.CASCADE)
+    quantity   = models.IntegerField()
+
+    class Meta:
+        db_table = 'cartitems'
