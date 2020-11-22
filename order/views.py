@@ -78,3 +78,20 @@ class CartView(View):
         cart_item.save()
 
         return JsonResponse({'message': 'ITEM QUANTITY MODIFIED'}, status = 200)
+
+    @check_user
+    def delete(self, request):
+        datas    = json.loads(request.body)
+        user_id = request.user.id
+        
+        for data in datas:
+            try:
+                cart_id = data['cart_id']
+        
+            except KeyError:
+                return JsonResponse({'message': "KEY_ERROR"}, status = 400)
+        
+            del_cart_item = CartItem.objects.get(id=cart_id)
+            del_cart_item.delete()
+
+        return JsonResponse({'message': 'CART ITEM IS DELETED'}, status = 200)
