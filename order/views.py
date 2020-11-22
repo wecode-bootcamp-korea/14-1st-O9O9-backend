@@ -60,3 +60,21 @@ class CartView(View):
 
         except Exception as error_message:
             return JsonResponse({'message': error_message}, status = 400)
+
+    @check_user
+    def patch(self, request):
+        data    = json.loads(request.body)
+        user_id = request.user.id
+
+        try:
+            cart_id    = data['cart_id']
+            quantity   = data['quantity']
+        
+        except KeyError:
+            return JsonResponse({'message': "KEY_ERROR"}, status = 400)
+
+        cart_item          = CartItem.objects.get(id=cart_id)
+        cart_item.quantity = quantity
+        cart_item.save()
+
+        return JsonResponse({'message': 'ITEM QUANTITY MODIFIED'}, status = 200)
