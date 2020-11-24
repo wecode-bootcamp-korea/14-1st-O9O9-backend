@@ -4,7 +4,7 @@ from my_settings import SECRET
 from user.models import User
 
 def check_user(func):
-    def wrapper_func(self, request):
+    def wrapper_func(self, request,**kwargs):
         for_client_token = request.headers.get('authorization',None)
         if for_client_token is None:
             return JsonResponse({'message': 'token please'},status=400)
@@ -12,7 +12,7 @@ def check_user(func):
             user_id = jwt.decode(for_client_token, SECRET, algorithms='HS256')
             user = User.objects.get(id=user_id['id'])
             request.user = user.id
-            return func(self,request)
+            return func(self,request,**kwargs)
         except User.DoesNotExist:
             return JsonResponse({'message':'unknown_user'},status=401)
         except jwt.DecodeError:
