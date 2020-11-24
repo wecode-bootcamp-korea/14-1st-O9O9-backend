@@ -95,3 +95,23 @@ class OrderView(View):
                 product.save()
 
                 return JsonResponse({'message': 'ITEM IS MODIFIED'}, status = 200)
+
+class OrderDeleteView(View):
+    @check_user
+    def post(self, request):
+        data = json.loads(request.body)
+        user_id = request.user.id
+        
+        try:
+            product_ids = data['product_ids']
+
+        except KeyError:
+            return JsonResponse({'message': "KEY_ERROR"}, status=400)
+
+        for product_id in product_ids:
+            products = OrderItem.objects.filter(product_id=product_id).select_related('order')
+            
+            for product in products.all():
+                if product.order.user_id == user_id and product.order.order_status_id == 1:
+                    product.delete()
+        return JsonResponse({'message': 'ITEM IS DELETED'}, status = 200)
