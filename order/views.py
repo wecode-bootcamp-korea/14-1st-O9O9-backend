@@ -75,3 +75,23 @@ class OrderView(View):
             )
         
         return JsonResponse({'message': 'ITEM ADD IN CART'}, status=201)
+
+    @check_user
+    def patch(self, request, product_id):
+        data    = json.loads(request.body)
+        user_id = request.user.id
+
+        try:
+            quantity        = data['quantity']
+        
+        except KeyError:
+            return JsonResponse({'message': "KEY_ERROR"}, status = 400)
+
+        products = OrderItem.objects.filter(product_id=product_id).select_related('order')
+
+        for product in products.all():
+            if product.order.user_id == user_id and product.order.order_status_id == 1:
+                product.quantity = quantity
+                product.save()
+
+                return JsonResponse({'message': 'ITEM IS MODIFIED'}, status = 200)
