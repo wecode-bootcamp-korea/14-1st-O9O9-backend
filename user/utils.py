@@ -13,6 +13,8 @@ def check_user(func):
             user = User.objects.get(id=user_id['id'])
             request.user = user.id
             return func(self,request)
+        except KeyError:
+            return JsonResponse({'message': "KEY_ERROR"}, status=400)
         except User.DoesNotExist:
             return JsonResponse({'message':'UNKNOWN_USER'},status=401)
         except jwt.DecodeError:

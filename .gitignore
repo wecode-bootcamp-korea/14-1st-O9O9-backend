@@ -17,6 +17,8 @@ SubCategory.csv
 SubSubCategory.csv
 User.csv
 WatchList.csv
+AnswerStatus.csv
+QuestionType.csv
 
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm,vscode,macos,django,python,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm,vscode,macos,django,python,vim

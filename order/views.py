@@ -37,9 +37,12 @@ class OrderView(View):
             try:
                 order = Order.objects.get(order_number=order_number)
             
-            except Exception as error_message:
-                return JsonResponse({'meesage': error_message}, status = 401)
-                
+            except Order.DoesNotExist:
+                return JsonResponse({'message': "ORDER_NUMBER IS NOT EXIST"}, status = 401)
+
+            except Order.MultipleObjectsReturned:
+                return JsonResponse({'message': "ORDER_NUMBER IS DUPLICATED"}, status = 401)
+
             OrderItem.objects.create(
                 product_id = product_id,
                 quantity   = quantity,
@@ -59,9 +62,12 @@ class OrderView(View):
             order_status_id = order_status_id,
             order_number    = order_number,
             )
+        try:
+            order = Order.objects.get(order_number=order_number)
         
-        order = Order.objects.get(order_number=order_number)
-        
+        except Order.DoesNotExist:
+            return JsonResponse({'message': "ORDER_NUMBER IS NOT EXIST"}, status = 401)
+
         OrderItem.objects.create(
             product_id = product_id,
             quantity   = quantity,
