@@ -96,6 +96,24 @@ class OrderView(View):
 
                 return JsonResponse({'message': 'ITEM IS MODIFIED'}, status = 200)
 
+    @check_user
+    def get(self, request):
+        user_id = request.user.id
+        user_products = Order.objects.filter(user_id=user_id, order_status_id=1).prefetch_related('orderitem_set', 'orderitem_set__product').all().order_by('-id')
+
+        return JsonResponse({
+            'product' : [
+            {
+                'product_id'       : products.product.id,
+                'name'             : products.product.name,
+                'quantity'         : products.quantity,
+                'price'            : products.product.price,
+                'thumbnail_image'  : products.product.thumbnail_image,
+            } 
+            for user_product in user_products for products in user_product.orderitem_set.all()
+        ]
+        }, status = 200)
+
 class OrderDeleteView(View):
     @check_user
     def post(self, request):
