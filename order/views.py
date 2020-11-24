@@ -1,97 +1,71 @@
 import json
+import uuid
 
 from django.views     import View
 from django.http      import JsonResponse
 
 from user.models     import User
-from product.models  import Product, Brand, ProductGroup, MainCategory, SubCategory, SubSubCategory, WatchList
-from .models         import OrderItem, Order, OrderStatus, Shipment, CartItem
+from product.models  import Product, Brand, ProductGroup, MainCategory, SubCategory, SubSubCategory
+from .models         import OrderItem, Order, OrderStatus, Shipment
 
 from user.utils import check_user
 
-class CartView(View):
+class OrderView(View):
     @check_user
     def post(self, request):
         data    = json.loads(request.body)
-
-        try:
-            product_id      = data['product_id']
-            quantity        = data['quantity']
-        
-        except KeyError:
-            return JsonResponse({'message': "KEY_ERROR"}, status = 400)
-        
-        exist_product = CartItem.objects.filter(product_id = product_id, user_id = user_id)
-        
-        if exist_product:
-            product = CartItem.objects.get(product_id = product_id, user_id = user_id)
-            product.quantity += quantity
-            product.save()
-
-            return JsonResponse({'message': 'ITEM ADD SUCCESS'}, status = 200)
-
-        CartItem.objects.create(
-            user_id     = user_id,
-            product_id  = product_id,
-            quantity    = quantity,
-        )
-
-        return JsonResponse({'message': 'ITEM ADD SUCCESS'}, status = 200)
-
-    @check_user
-    def get(self, request):
-        user_id = request.user.id
-
-        cart_items = CartItem.objects.filter(user_id=user_id).order_by('-id').values()
-        
-        try:
-            return JsonResponse({
-                'cart_item' : [
-                {
-                    'cart_id'          : cart_item['id'],
-                    'product_name'     : Product.objects.get(id=cart_item['product_id']).name,
-                    'quantity'         : cart_item['quantity'],
-                    'price'            : Product.objects.get(id=cart_item['product_id']).price,
-                    'thumbnail_image'  : Product.objects.get(id=cart_item['product_id']).thumbnail_image
-                } 
-                for cart_item in cart_items
-            ]
-            }, status = 200)
-
-        except Exception as error_message:
-            return JsonResponse({'message': error_message}, status = 400)
-
-    @check_user
-    def patch(self, request):
-        data    = json.loads(request.body)
         user_id = request.user.id
 
         try:
-            cart_id    = data['cart_id']
+            product_id = data['product_id']
             quantity   = data['quantity']
         
         except KeyError:
-            return JsonResponse({'message': "KEY_ERROR"}, status = 400)
-
-        cart_item          = CartItem.objects.get(id=cart_id)
-        cart_item.quantity = quantity
-        cart_item.save()
-
-        return JsonResponse({'message': 'ITEM QUANTITY MODIFIED'}, status = 200)
-
-    @check_user
-    def delete(self, request):
-        datas    = json.loads(request.body)
-        user_id = request.user.id
+            return JsonResponse({'message': "KEY_ERROR"}, status=400)
         
-        for data in datas:
+        order_status_id = 1
+        order_number    = uuid.uuid4()
+
+        products = OrderItem.objects.filter(product_id=product_id).select_related('order')
+    
+        if not products:
+            Order.objects.create(
+                user_id         = user_id,
+                order_status_id = order_status_id,
+                order_number    = order_number,
+                )
             try:
-                cart_id = data['cart_id']
+                order = Order.objects.get(order_number=order_number)
+            
+            except Exception as error_message:
+                return JsonResponse({'meesage': error_message}, status = 401)
+                
+            OrderItem.objects.create(
+                product_id = product_id,
+                quantity   = quantity,
+                order_id   = order.id
+                )
+            
+            return JsonResponse({'message': 'ITEM ADD IN CART'}, status=201)
+            
+        for product in products.all():
+            if product.order.user_id == user_id and product.order.order_status_id == 1:
+                product.quantity += quantity
+                product.save()
+                return JsonResponse({'message': 'ITEM ADD IN CART'}, status=201)
         
-            except KeyError:
-                return JsonResponse({'message': "KEY_ERROR"}, status = 400)
+        Order.objects.create(
+            user_id         = user_id,
+            order_status_id = order_status_id,
+            order_number    = order_number,
+            )
         
-            del_cart_item = CartItem.objects.get(id=cart_id)
-            del_cart_item.delete()
-
-        return JsonResponse({'message': 'CART ITEM IS DELETED'}, status = 200)
+        order = Order.objects.get(order_number=order_number)
+        
+        OrderItem.objects.create(
+            product_id = product_id,
+            quantity   = quantity,
+            order_id   = order.id
+            )
+        
+        return JsonResponse({'message': 'ITEM ADD IN CART'}, status=201)
