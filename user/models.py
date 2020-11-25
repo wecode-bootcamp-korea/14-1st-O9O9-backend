@@ -10,5 +10,8 @@ class User(models.Model):
     class Meta:
         db_table = 'users'
 
-
-
+class Allow(models.Model):
+    allow_code = models.CharField(max_length = 30)
+    
+    class Meta:
+        db_table = 'allows'
