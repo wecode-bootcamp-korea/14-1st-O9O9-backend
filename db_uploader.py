@@ -7,9 +7,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "o9o9.settings")
 django.setup()
 
 from user.models    import User
-from product.models import Product, Brand, ProductGroup, MainCategory, SubCategory, SubSubCategory
+from product.models import Product, Brand, ProductGroup, MainCategory, SubCategory, SubSubCategory, MoreInformation, SellerInformation, Exchange
 from order.models   import OrderItem, Order, OrderStatus, Shipment
-from review.models  import PhotoReview, Review, Question
+from review.models  import PhotoReview, Review, Question, QuestionType, AnswerStatus
 
 # User
 
@@ -186,9 +186,9 @@ with open(CSV_PATH_PRODUCTS) as in_file:
             name=name,
             brand_id=brand_id,
             price=price,
-            more_information=more_information,
-            seller_information=seller_information,
-            exchange=exchange,
+            more_information_id=more_information,
+            seller_information_id=seller_information,
+            exchange_id=exchange,
             thumbnail_image=thumbnail_image,
             detail_image=detail_image,
             essential=True if essential == "TRUE" else False,
@@ -245,4 +245,99 @@ with open(CSV_PATH_PRODUCTS) as in_file:
         answer_status = row[4]
         created_at    = row[5]
         
-        Question.objects.create(user_id=user_id, product_id=product_id, content=content, question_type=question_type, answer_status=answer_status, created_at=created_at)
+        Question.objects.create(user_id=user_id, product_id=product_id, content=content, question_type_id=question_type, answer_status_id=answer_status, created_at=created_at)
+
+# MoreInformation
+
+CSV_PATH_PRODUCTS = './MoreInformation.csv'
+
+with open(CSV_PATH_PRODUCTS) as in_file:
+    data_reader = csv.reader(in_file)
+    next(data_reader, None)
+    for row in data_reader:
+        tax_status         = row[0]
+        receipt      = row[1]
+        business_classification    = row[2]
+        producer_importer            = row[3]
+        origin         = row[4]
+        manufacturing_date    = row[5]
+        shelf_life     = row[6]
+        storage_method = row[7]
+        delivery_period = row[8]
+
+        MoreInformation.objects.create(
+            tax_status=tax_status,
+            receipt=receipt,
+            business_classification=business_classification,
+            producer_importer=producer_importer,
+            origin=origin,
+            manufacturing_date=manufacturing_date,
+            shelf_life=shelf_life,
+            storage_method=storage_method,
+            delivery_period=delivery_period
+            )
+
+# SellerInformation
+
+CSV_PATH_PRODUCTS = './SellerInformation.csv'
+
+with open(CSV_PATH_PRODUCTS) as in_file:
+    data_reader = csv.reader(in_file)
+    next(data_reader, None)
+    for row in data_reader:
+        representative         = row[0]
+        business_number      = row[1]
+        phone_number    = row[2]
+        email            = row[3]
+
+        SellerInformation.objects.create(
+            representative=representative,
+            business_number=business_number,
+            phone_number=phone_number,
+            email=email
+            )
+
+# Exchange
+
+CSV_PATH_PRODUCTS = './Exchange.csv'
+
+with open(CSV_PATH_PRODUCTS) as in_file:
+    data_reader = csv.reader(in_file)
+    next(data_reader, None)
+    for row in data_reader:
+        return_shipping_fee         = row[0]
+        where_to_send      = row[1]
+        detail_information    = row[2]
+
+
+        Exchange.objects.create(
+            return_shipping_fee=return_shipping_fee,
+            where_to_send=where_to_send,
+            detail_information=detail_information
+            )
+
+# QuestionType
+
+CSV_PATH_PRODUCTS = './QuestionType.csv'
+
+with open(CSV_PATH_PRODUCTS) as in_file:
+    data_reader = csv.reader(in_file)
+    next(data_reader, None)
+    for row in data_reader:
+        question_type = row[0]
+
+        QuestionType.objects.create(question_type=question_type)
+
+# AnswerStatus
+
+CSV_PATH_PRODUCTS = './AnswerStatus.csv'
+
+with open(CSV_PATH_PRODUCTS) as in_file:
+    data_reader = csv.reader(in_file)
+    next(data_reader, None)
+    for row in data_reader:
+        answer_status = row[0]
+
+        AnswerStatus.objects.create(answer_status=answer_status)
+
+

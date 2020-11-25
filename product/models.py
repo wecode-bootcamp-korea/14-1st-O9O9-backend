@@ -4,9 +4,9 @@ class Product(models.Model):
     name               = models.CharField(max_length=100)
     brand              = models.ForeignKey('Brand', on_delete=models.CASCADE, null=True)
     price              = models.CharField(max_length=80, null=True)
-    more_information   = models.TextField(null=True)
-    seller_information = models.TextField(null=True)
-    exchange           = models.TextField(null=True)
+    more_information   = models.ForeignKey('MoreInformation', on_delete=models.CASCADE, null=True)
+    seller_information = models.ForeignKey('SellerInformation', on_delete=models.CASCADE, null=True)
+    exchange           = models.ForeignKey('Exchange', on_delete=models.CASCADE, null=True)
     thumbnail_image    = models.URLField(max_length=500)
     detail_image       = models.URLField(max_length=500)
     essential          = models.BooleanField()
@@ -25,7 +25,7 @@ class Brand(models.Model):
     name = models.CharField(max_length=100)
 
 class ProductGroup(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80, null=True)
 
     class Meta:
         db_table = 'productgroups'
@@ -47,3 +47,25 @@ class SubSubCategory(models.Model):
 
     class Meta:
         db_table = 'subsubcategories'
+
+class MoreInformation(models.Model):
+    tax_status              = models.CharField(max_length=100)
+    receipt                 = models.CharField(max_length=100)
+    business_classification = models.CharField(max_length=100)
+    producer_importer       = models.CharField(max_length=100)
+    origin                  = models.CharField(max_length=100)
+    manufacturing_date      = models.CharField(max_length=100)
+    shelf_life              = models.CharField(max_length=100)
+    storage_method          = models.CharField(max_length=100)
+    delivery_period         = models.CharField(max_length=100)
+
+class SellerInformation(models.Model):
+    representative  = models.CharField(max_length=100)
+    business_number = models.CharField(max_length=100)
+    phone_number    = models.CharField(max_length=100)
+    email           = models.CharField(max_length=100)
+
+class Exchange(models.Model):
+    return_shipping_fee = models.CharField(max_length=100)
+    where_to_send       = models.CharField(max_length=100)
+    detail_information  = models.CharField(max_length=2000)

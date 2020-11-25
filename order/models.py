@@ -34,11 +34,3 @@ class Shipment(models.Model):
 
     class Meta:
         db_table = 'shipments'
-
-class CartItem(models.Model):
-    user       = models.ForeignKey('user.User', on_delete=models.CASCADE, null=True)
-    product    = models.ForeignKey('product.Product', on_delete=models.CASCADE)
-    quantity   = models.IntegerField()
-
-    class Meta:
-        db_table = 'cartitems'
