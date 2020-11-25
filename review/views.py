@@ -31,7 +31,10 @@ class QuestionInfoView(View):
         data = json.loads(request.body)
         login_user = User.objects.get(id = request.user)
         product_name = Product.objects.get(name = data['product_name'])
-        return JsonResponse({'name':login_user.name,'email':login_user.email_address,'phone_number':login_user.phone_number,'product_name':product_name.name},status=200)
+        return JsonResponse({'name':login_user.name,
+                             'email':login_user.email_address,
+                             'phone_number':login_user.phone_number,
+                             'product_name':product_name.name},status=200)
 
 class QuestionEnrollView(View):
     @check_user
