@@ -1,7 +1,11 @@
+import json
+
 from django.views   import View
 from django.http    import JsonResponse
 
 from .models        import MainCategory, Product, ProductGroup
+from user.models    import User
+from order.models   import Order, OrderStatus, OrderItem
 
 class CategoriesView(View):
     def get(self, request):
@@ -34,9 +38,9 @@ class ProductsView(View):
                     "imageUrl"       : group_product.product_set.all().first().thumbnail_image,
                     "title"          : group_product.name,
                     "price"          : group_product.product_set.all().first().price,
-                    "brand"          : group_product.product_set.all().first().brand.name
-                    # "watchlist": product.watch_product.count(),
-                    # "buy_count": product.buy_product.count(),
+                    "brand"          : group_product.product_set.all().first().brand.name,
+                    "watchlist"      : group_product.product_set.all().first().watchlist.count(),
+                    "buy_count"      : group_product.product_set.all().first().buy_count.count()
                 })
 
             for nongroup_product in nongroup_products:
@@ -45,14 +49,14 @@ class ProductsView(View):
                     "imageUrl" : nongroup_product.thumbnail_image,
                     "title"    : nongroup_product.name,
                     "price"    : nongroup_product.price,
-                    "brand"    : nongroup_product.brand.name
-                    # "watchlist": product.watch_product.count(),
-                    # "buy_count": product.buy_product.count(),
+                    "brand"    : nongroup_product.brand.name,
+                    "watchlist": nongroup_product.watchlist.count(),
+                    "buy_count": nongroup_product.buy_count.count()
                 })
 
             products = product_list + nonproduct_list
 
-            return JsonResponse({'productList': product_list}, status=200)
+            return JsonResponse({'productList': products}, status=200)
 
         if sub_category_id:
             group_products = ProductGroup.objects.prefetch_related('product_set')
@@ -67,28 +71,13 @@ class ProductsView(View):
                 if not group_product.product_set.all().first().subcategory_id == int(sub_category_id):
                     continue
                 product_list.append({
-                    "id": group_product.product_set.all().first().id,
-                    "imageUrl": group_product.product_set.all().first().thumbnail_image,
-                    "title": group_product.name,
-                    "price": group_product.product_set.all().first().price,
-                    "brand": group_product.product_set.all().first().brand.name
-                    # "watchlist": product.watch_product.count(),
-                    # "buy_count": product.buy_product.count(),
-                })
-
-            for group_product in group_products:
-                if not group_product.product_set.all().first():
-                    continue
-                if not group_product.product_set.all().first().subcategory_id == int(sub_category_id):
-                    continue
-                product_list.append({
-                    "id": group_product.product_set.all().first().id,
-                    "imageUrl": group_product.product_set.all().first().thumbnail_image,
-                    "title": group_product.name,
-                    "price": group_product.product_set.all().first().price,
-                    "brand": group_product.product_set.all().first().brand.name
-                    # "watchlist": product.watch_product.count(),
-                    # "buy_count": product.buy_product.count(),
+                    "id"        : group_product.product_set.all().first().id,
+                    "imageUrl"  : group_product.product_set.all().first().thumbnail_image,
+                    "title"     : group_product.name,
+                    "price"     : group_product.product_set.all().first().price,
+                    "brand"     : group_product.product_set.all().first().brand.name,
+                    "watchlist" : group_product.product_set.all().first().watchlist.count(),
+                    "buy_count" : group_product.product_set.all().first().buy_count.count()
                 })
 
             for nongroup_product in nongroup_products:
@@ -97,9 +86,9 @@ class ProductsView(View):
                     "imageUrl": nongroup_product.thumbnail_image,
                     "title": nongroup_product.name,
                     "price": nongroup_product.price,
-                    "brand": nongroup_product.brand.name
-                    # "watchlist": product.watch_product.count(),
-                    # "buy_count": product.buy_product.count(),
+                    "brand": nongroup_product.brand.name,
+                    "watchlist": nongroup_product.watchlist.count(),
+                    "buy_count": nongroup_product.buy_count.count()
                 })
 
             products = product_list + nonproduct_list
@@ -113,6 +102,7 @@ class ProductDetailView(View):
             "maincategoryId"    : product.maincategory.id,
             "subcategoryId"     : product.subcategory.id,
             "imageUrl"          : product.thumbnail_image,
+            "detailproductImage": product.detail_image,
             "title"             : product.name,
             "price"             : product.price,
             "brand"             : product.brand.name,
@@ -142,3 +132,35 @@ class ProductDetailView(View):
         }
 
         return JsonResponse({'product': product_detail}, status=200)
+
+class WatchListView(View):
+    # @check_user
+    def post(self, request):
+        data = json.loads(request.body)
+        user_id = 3
+
+        if not user_id:
+            return JsonResponse({'message': 'INVALID_USER'}, status=401)
+
+        if 'product_id' not in data:
+            return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+
+        if not Product.objects.filter(id=data['product_id']).exists():
+            return JsonResponse({'message': 'POST_NOT_FOUND'}, status=404)
+
+
+
+        user_model = User.objects.get(id=user_id)
+        product_model = Product.objects.filter(id=data['product_id'])
+        product_model.watchlist.add(user_model)
+        return JsonResponse({'message': 'SUCCESS'}, status=200)
+
+    # @check_user
+    def delete(self, request):
+        data = json.loads(request.body)
+        user_id = 3
+
+        user_model = User.objects.get(id=user_id)
+        product_model = Product.objects.get(id=data['product_id'])
+        product_model.watchlist.remove(user_model)
+        return JsonResponse({'message': 'SUCCESS'}, status=200)
