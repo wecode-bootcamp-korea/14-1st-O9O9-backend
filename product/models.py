@@ -15,7 +15,7 @@ class Product(models.Model):
     maincategory       = models.ForeignKey('MainCategory', on_delete=models.CASCADE, null=True)
     subcategory        = models.ForeignKey('SubCategory', on_delete=models.CASCADE, null=True)
     subsubcategory     = models.ForeignKey('SubSubCategory', on_delete=models.CASCADE, null=True)
-    buy_count          = models.ManyToManyField('order.Order', related_name='buy_product', through='order.OrderItem')
+    buy_count          = models.IntegerField()
     watchlist          = models.ManyToManyField('user.User', related_name='watch_product', through='BuyCount')
 
     class Meta:
@@ -70,6 +70,6 @@ class Exchange(models.Model):
     where_to_send       = models.CharField(max_length=100)
     detail_information  = models.CharField(max_length=2000)
 
-class BuyCount(models.Model):
+class WatchList(models.Model):
     user    = models.ForeignKey('user.User', on_delete=models.CASCADE, null=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True)
