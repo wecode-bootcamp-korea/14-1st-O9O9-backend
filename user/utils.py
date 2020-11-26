@@ -4,7 +4,7 @@ from my_settings import SECRET, ALGORITHMS
 from user.models import User
 
 def check_user(func):
-    def wrapper_func(self, request):
+    def wrapper_func(self, request,**kwargs):
         access_token = request.headers.get('authorization')
         if access_token is None:
             return JsonResponse({'message': 'TOKEN PLEASE'},status=400)

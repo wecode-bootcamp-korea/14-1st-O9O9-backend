@@ -7,8 +7,8 @@ class Product(models.Model):
     more_information   = models.TextField(null=True)
     seller_information = models.TextField(null=True)
     exchange           = models.TextField(null=True)
-    thumbnail_image    = models.URLField(max_length=500)
-    detail_image       = models.URLField(max_length=500)
+    thumbnail_image    = models.URLField(max_length=500,null=True)
+    detail_image       = models.URLField(max_length=500,null=True)
     essential          = models.BooleanField(null=True)
     optional           = models.BooleanField(null=True)
     productgroup       = models.ForeignKey('Productgroup', on_delete=models.CASCADE, null = True)  
@@ -22,31 +22,31 @@ class Product(models.Model):
         db_table = 'products'
 
 class Brand(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,null=True)
 
     class Meta:
         db_table = 'brands'
 
 class ProductGroup(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'productgroups'
 
 class MainCategory(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'maincategories'
 
 class SubCategory(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'subcategories'
 
 class SubSubCategory(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'subsubcategories'
