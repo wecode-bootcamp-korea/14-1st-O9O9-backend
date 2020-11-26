@@ -33,14 +33,6 @@ class ProductsView(View):
 
         group_products = ProductGroup.objects.prefetch_related('product_set')
         nongroup_products = Product.objects.select_related(('brand').filter(q), essential = False)
-        #
-        # if Q(main_category_id) | Q(sub_category_id):
-        #
-        #     group_products = ProductGroup.objects.prefetch_related('product_set')
-        #     # nongroup_products = Product.objects.select_related('brand').filter(Q(maincategory=main_category_id) | Q(subcategory=sub_category_id), essential=False)
-
-            # product_list = []
-            # nonproduct_list = []
 
         for group_product in group_products:
             if not group_product.product_set[0]:
@@ -126,31 +118,30 @@ class ProductDetailView(View):
         return JsonResponse({'product': product_detail}, status=200)
 
 class WatchListView(View):
-    pass
-    # @check_user
-    # def post(self, request):
-    #     data = json.loads(request.body)
-    #     user_id = request.user.id
-    #
-    #     user_model = User.objects.get(id=user_id)
-    #     product_model = Product.objects.get(id=data['product_id'])
-    #     if not product_model.essential:
-    #         product_model.watchlist.add(user_model)
-    #     else:
-    #         ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.add(user_model)
-    #
-    #     return JsonResponse({'message': 'SUCCESS'}, status=200)
-    #
-    # @check_user
-    # def delete(self, request):
-    #     data = json.loads(request.body)
-    #     user_id = request.user.id
-    #
-    #     user_model = User.objects.get(id=user_id)
-    #     product_model = Product.objects.get(id=data['product_id'])
-    #     if not product_model.essential:
-    #         product_model.watchlist.add(user_model)
-    #     else:
-    #         ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.remove(user_model)
-    #
-    #     return JsonResponse({'message': 'SUCCESS'}, status=200)
+    @check_user
+    def post(self, request):
+        data = json.loads(request.body)
+        user_id = request.user.id
+
+        user_model = User.objects.get(id=user_id)
+        product_model = Product.objects.get(id=data['product_id'])
+        if not product_model.essential:
+            product_model.watchlist.add(user_model)
+        else:
+            ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.add(user_model)
+
+        return JsonResponse({'message': 'SUCCESS'}, status=200)
+
+    @check_user
+    def delete(self, request):
+        data = json.loads(request.body)
+        user_id = request.user.id
+
+        user_model = User.objects.get(id=user_id)
+        product_model = Product.objects.get(id=data['product_id'])
+        if not product_model.essential:
+            product_model.watchlist.add(user_model)
+        else:
+            ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.remove(user_model)
+
+        return JsonResponse({'message': 'SUCCESS'}, status=200)
