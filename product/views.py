@@ -22,43 +22,55 @@ class ProductsView(View):
         main_category_id = request.GET.get('main')
         sub_category_id = request.GET.get('sub')
 
-        if Q(main_category_id) | Q(sub_category_id):
+        q = Q()
+        if main_category_id:
+            q &= Q(main_category_id=main_category_id)
+        if sub_category_id:
+            q &= Q(sub_category_id=sub_category_id)
 
-            group_products = ProductGroup.objects.prefetch_related('product_set')
-            nongroup_products = Product.objects.select_related('brand').filter(Q(maincategory=main_category_id) | Q(subcategory=sub_category_id), essential=False)
+        product_list = []
+        nonproduct_list = []
 
-            product_list = []
-            nonproduct_list = []
+        group_products = ProductGroup.objects.prefetch_related('product_set')
+        nongroup_products = Product.objects.select_related(('brand').filter(q), essential = False)
+        #
+        # if Q(main_category_id) | Q(sub_category_id):
+        #
+        #     group_products = ProductGroup.objects.prefetch_related('product_set')
+        #     # nongroup_products = Product.objects.select_related('brand').filter(Q(maincategory=main_category_id) | Q(subcategory=sub_category_id), essential=False)
 
-            for group_product in group_products:
-                if not group_product.product_set.all()[0]:
-                    continue
-                if group_product.product_set.all()[0].maincategory_id != Q(main_category_id) | Q(sub_category_id):
-                    continue
-                product_list.append({
-                    "id"             : group_product.product_set[0].id,
-                    "imageUrl"       : group_product.product_set[0].thumbnail_image,
-                    "title"          : group_product.name,
-                    "price"          : group_product.product_set[0].price,
-                    "brand"          : group_product.product_set[0].brand.name,
-                    "watchlist"      : group_product.product_set[0].watchlist.count(),
-                    "buy_count"      : group_product.product_set[0].buy_count.count()
-                })
+            # product_list = []
+            # nonproduct_list = []
 
-            for nongroup_product in nongroup_products:
-                nonproduct_list.append({
-                    "id"       : nongroup_product.id,
-                    "imageUrl" : nongroup_product.thumbnail_image,
-                    "title"    : nongroup_product.name,
-                    "price"    : nongroup_product.price,
-                    "brand"    : nongroup_product.brand.name,
-                    "watchlist": nongroup_product.watchlist.count(),
-                    "buy_count": nongroup_product.buy_count.count()
-                })
+        for group_product in group_products:
+            if not group_product.product_set[0]:
+                continue
+            if group_product.product_set[0].maincategory_id != Q(main_category_id) | Q(sub_category_id):
+                continue
+            product_list.append({
+                "id"             : group_product.product_set[0].id,
+                "imageUrl"       : group_product.product_set[0].thumbnail_image,
+                "title"          : group_product.name,
+                "price"          : group_product.product_set[0].price,
+                "brand"          : group_product.product_set[0].brand.name,
+                "watchlist"      : group_product.product_set[0].watchlist.count(),
+                "buy_count"      : group_product.product_set[0].buy_count.count()
+            })
 
-            products = product_list + nonproduct_list
+        for nongroup_product in nongroup_products:
+            nonproduct_list.append({
+                "id"       : nongroup_product.id,
+                "imageUrl" : nongroup_product.thumbnail_image,
+                "title"    : nongroup_product.name,
+                "price"    : nongroup_product.price,
+                "brand"    : nongroup_product.brand.name,
+                "watchlist": nongroup_product.watchlist.count(),
+                "buy_count": nongroup_product.buy_count.count()
+            })
 
-            return JsonResponse({'productList': products}, status=200)
+        products = product_list + nonproduct_list
+
+        return JsonResponse({'productList': products}, status=200)
 
 class ProductDetailView(View):
     def get(self, request, product_id):
@@ -114,30 +126,31 @@ class ProductDetailView(View):
         return JsonResponse({'product': product_detail}, status=200)
 
 class WatchListView(View):
-    @check_user
-    def post(self, request):
-        data = json.loads(request.body)
-        user_id = request.user.id
-
-        user_model = User.objects.get(id=user_id)
-        product_model = Product.objects.get(id=data['product_id'])
-        if not product_model.essential:
-            product_model.watchlist.add(user_model)
-        else:
-            ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.add(user_model)
-
-        return JsonResponse({'message': 'SUCCESS'}, status=200)
-
-    @check_user
-    def delete(self, request):
-        data = json.loads(request.body)
-        user_id = request.user.id
-
-        user_model = User.objects.get(id=user_id)
-        product_model = Product.objects.get(id=data['product_id'])
-        if not product_model.essential:
-            product_model.watchlist.add(user_model)
-        else:
-            ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.remove(user_model)
-
-        return JsonResponse({'message': 'SUCCESS'}, status=200)
+    pass
+    # @check_user
+    # def post(self, request):
+    #     data = json.loads(request.body)
+    #     user_id = request.user.id
+    #
+    #     user_model = User.objects.get(id=user_id)
+    #     product_model = Product.objects.get(id=data['product_id'])
+    #     if not product_model.essential:
+    #         product_model.watchlist.add(user_model)
+    #     else:
+    #         ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.add(user_model)
+    #
+    #     return JsonResponse({'message': 'SUCCESS'}, status=200)
+    #
+    # @check_user
+    # def delete(self, request):
+    #     data = json.loads(request.body)
+    #     user_id = request.user.id
+    #
+    #     user_model = User.objects.get(id=user_id)
+    #     product_model = Product.objects.get(id=data['product_id'])
+    #     if not product_model.essential:
+    #         product_model.watchlist.add(user_model)
+    #     else:
+    #         ProductGroup.objects.get(id=product_model.productgroup.id).product_set.all()[0].watchlist.remove(user_model)
+    #
+    #     return JsonResponse({'message': 'SUCCESS'}, status=200)
