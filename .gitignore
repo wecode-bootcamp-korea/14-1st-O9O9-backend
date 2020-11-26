@@ -1,6 +1,9 @@
 DS_Store
 my_settings.py
 
+db_uploader.py
+*.csv
+
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm,vscode,macos,django,python,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm,vscode,macos,django,python,vim
 
@@ -374,11 +377,10 @@ tags
 !.vscode/extensions.json
 *.code-workspace
 
-*.csv
-db_uploader.py
+# etc
+
 Project_Default.xml
 profiles_settings.xml
 
-
-
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,vscode,macos,django,python,vim
+

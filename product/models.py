@@ -22,7 +22,10 @@ class Product(models.Model):
         db_table = 'products'
 
 class Brand(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,null=True)
+
+    class Meta:
+        db_table = 'brands'
 
 class ProductGroup(models.Model):
     name = models.CharField(max_length=80, null=True)
@@ -31,7 +34,7 @@ class ProductGroup(models.Model):
         db_table = 'productgroups'
 
 class MainCategory(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'maincategories'

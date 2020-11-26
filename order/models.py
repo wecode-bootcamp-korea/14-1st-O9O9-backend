@@ -34,3 +34,4 @@ class Shipment(models.Model):
 
     class Meta:
         db_table = 'shipments'
+
