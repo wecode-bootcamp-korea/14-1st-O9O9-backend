@@ -2,23 +2,7 @@ DS_Store
 my_settings.py
 
 db_uploader.py
-
-Brand.csv
-MainCategory.csv
-Order.csv
-OrderItem.csv
-OrderStatus.csv
-Product.csv
-ProductGroup.csv
-Question.csv
-Review.csv
-Shipment.csv
-SubCategory.csv
-SubSubCategory.csv
-User.csv
-WatchList.csv
-AnswerStatus.csv
-QuestionType.csv
+*.csv
 
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm,vscode,macos,django,python,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm,vscode,macos,django,python,vim
@@ -393,4 +377,10 @@ tags
 !.vscode/extensions.json
 *.code-workspace
 
+# etc
+
+Project_Default.xml
+profiles_settings.xml
+
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,vscode,macos,django,python,vim
+
