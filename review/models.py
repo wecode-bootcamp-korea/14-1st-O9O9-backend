@@ -28,7 +28,7 @@ class Question(models.Model):
     title          = models.CharField(max_length=100)
     content        = models.CharField(max_length=100)
     question_type  = models.ForeignKey('review.QuestionType', on_delete=models.CASCADE)
-    answer_status  = models.ForeignKey('review.AnswerStatus',on_delete=models.CASCADE)
+    answer_status  = models.ForeignKey('review.AnswerStatus', on_delete=models.CASCADE)
     created_at     = models.DateTimeField(auto_now_add=True)
 
     class Meta:

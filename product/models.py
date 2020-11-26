@@ -11,18 +11,21 @@ class Product(models.Model):
     detail_image       = models.URLField(max_length=500,null=True)
     essential          = models.BooleanField(null=True)
     optional           = models.BooleanField(null=True)
-    productgroup       = models.ForeignKey('ProductGroup', on_delete=models.CASCADE, null=True)
+    productgroup       = models.ForeignKey('Productgroup', on_delete=models.CASCADE, null = True)  
     maincategory       = models.ForeignKey('MainCategory', on_delete=models.CASCADE, null=True)
     subcategory        = models.ForeignKey('SubCategory', on_delete=models.CASCADE, null=True)
     subsubcategory     = models.ForeignKey('SubSubCategory', on_delete=models.CASCADE, null=True)
-    buy_count          = models.ManyToManyField('user.User', related_name='buy_product')
-    watchlist          = models.ManyToManyField('user.User', related_name='watch_product')
+    buy_count          = models.ManyToManyField('user.User', related_name='buy_product', null=True)
+    watchlist          = models.ManyToManyField('user.User', related_name='watch_product', null=True)
 
     class Meta:
         db_table = 'products'
 
 class Brand(models.Model):
     name = models.CharField(max_length=100,null=True)
+
+    class Meta:
+        db_table = 'brands'
 
 class ProductGroup(models.Model):
     name = models.CharField(max_length=80,null=True)
@@ -37,14 +40,13 @@ class MainCategory(models.Model):
         db_table = 'maincategories'
 
 class SubCategory(models.Model):
-    name            = models.CharField(max_length=80,null=True)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'subcategories'
 
 class SubSubCategory(models.Model):
-    name           = models.CharField(max_length=80,null=True)
+    name = models.CharField(max_length=80,null=True)
 
     class Meta:
         db_table = 'subsubcategories'
-
